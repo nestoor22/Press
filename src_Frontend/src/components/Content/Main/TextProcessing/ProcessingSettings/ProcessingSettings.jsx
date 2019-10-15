@@ -3,19 +3,19 @@ import React from 'react';
 import InputRange from 'react-input-range';
 import Select from 'react-select';
 import 'react-input-range/lib/css/index.css';
+import { changeNumberOfSentencesToProcessCreator, changePercentOfSentencesToProcessCreator, moveRangeToClosestStepCreator} from '../../../../../redux/mainPage-reducer';
 
 const ProcessingSettings = (props) => {
 
     // debugger;
-    // let inputNumber = React.createRef();
 
     let onDropdownChange = (event) => {
-        let selectedNumberOfSentences = event.value
-        console.log("selectedNumberOfSentences = " + selectedNumberOfSentences)
-        props.changeNumberOfSentencesToProcess(selectedNumberOfSentences)
-        // debugger;
+        // console.log("selectedNumberOfSentences = " + selectedNumberOfSentences)
+        let action = changeNumberOfSentencesToProcessCreator(event.value)
+        props.dispatch(action)
     }
 
+    // Before rendering html
     let selectedValue = {
         value: props.numberOfSentencesToProcess,
         label: props.numberOfSentencesToProcess
@@ -23,11 +23,10 @@ const ProcessingSettings = (props) => {
 
     let options = props.dropdownOptions;
 
+    // Styles for Dropdown input
     const customControlStyles = {
         control: (base) => ({
             ...base,
-            // height: 50,
-            
         }),
         menuList: (base) => ({
             ...base,
@@ -45,48 +44,54 @@ const ProcessingSettings = (props) => {
                 marginTop: 0
             })
         })
-        
-
     }
 
-    let onRangeChange = (event) => {
-        let selectedPercentOfSentences = event.value
-        console.log("selectedPercentOfSentences = " + selectedPercentOfSentences)
+    // Before rendering html
+    let rangeValue = props.rangeData.percentOfSentencesToProcess
+
+    // Disabling range if there is no data to choose
+    let rangeIsDisabled = () => {
+        if (props.dropdownOptions.length === 0) {
+            return true
+        } else {
+            return false
+        }
     }
-    
-    let percentOfSentencesToProcess = props.rangeData.percentOfSentencesToProcess.currentValue;
-    
-    let rangeValue = {
-        currentValue: percentOfSentencesToProcess
-    }
-    // debugger;
-    let setRangeValue = (obj) => {
+
+    // When scrolling the range
+    let onChangeRangeValue = (value) => {
         // debugger;
-        rangeValue = obj
+        let action = changePercentOfSentencesToProcessCreator(value)
+        props.dispatch(action)
+    }
+    // When scroll is finished 
+    let moveToClosestStep = (value) => {
+        let action = moveRangeToClosestStepCreator(value)
+        props.dispatch(action)
     }
 
     return (
-        <div>
-            <Select
-                className={s.hover}
-                styles={customControlStyles}
-                options={options}
-                // ref={inputNumber}
-                value={selectedValue}
-                onChange={onDropdownChange.bind(this)}
-                menuPlacement="top" />
+        <div className={s.settingsBlock}>
+            <div>
+                <Select
+                    className={s.hover}
+                    styles={customControlStyles}
+                    options={options}
+                    // ref={inputNumber}
+                    value={selectedValue}
+                    onChange={onDropdownChange.bind(this)}
+                    // menuPlacement="top"
+                    isSearchable={false} />
+            </div>
             
-
             <div className={s.rangeBlock}>
-
                 <InputRange
+                    disabled={rangeIsDisabled()}
                     maxValue={props.rangeData.maxPercentSentencesToProcess}
                     minValue={props.rangeData.minPercentSentencesToProcess}
-                    value={rangeValue.currentValue}
-                    onChange={value => setRangeValue({ currentValue: value })} 
-                    onChangeComplete={value => console.log(value)} />
-
-                {/* <input type="range" min="0" max="50" step="1" value={currentRangeValue} onchange={changeRangeValue}></input> */}
+                    value={rangeValue}
+                    onChange={value => onChangeRangeValue(value)} 
+                    onChangeComplete={value => moveToClosestStep(value)} />
             </div>
         </div>
 

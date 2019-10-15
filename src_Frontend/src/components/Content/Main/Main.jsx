@@ -8,20 +8,34 @@ const Main = (props) => {
 	return (
 		<div className={s.profile}>
 			
-			<TextProcessing 
+			<TextProcessing 	
 				textSummarized={props.mainPage.textSummarized}
-				addSentencesFromSummarizedText={props.addSentencesFromSummarizedText}
 				textToProcess={props.mainPage.textToProcess}
-				changeTextToProcess={props.changeTextToProcess}
-				splitAndCalculateSentences={props.splitAndCalculateSentences}
-
+				numberOfSentences={props.mainPage.numberOfSentences}
+				numberOfSymbols={props.mainPage.numberOfSymbols}
 				numberOfSentencesToProcess={props.mainPage.numberOfSentencesToProcess}
-				changeNumberOfSentencesToProcess={props.changeNumberOfSentencesToProcess}
 				dropdownOptions={props.mainPage.dropdownOptions}
 				rangeData={props.mainPage.rangeData}
+				dispatch={props.dispatch}
 			/>
 		</div>
 	)
 }
+
+
+// let mapStateToProps = (state) => {
+// 	return {
+// 		mainPage: state.dialogsPage
+// 	}
+// }
+// let mapDispatchToProps = () => {
+// 	return {
+// 		sendRequest: () => {
+
+// 		} 
+// 	}
+// } 
+
+// const TextProcessingContainer = connect(mapStateToProps, mapDispatchToProps)(TextProcessing)
 
 export default Main
